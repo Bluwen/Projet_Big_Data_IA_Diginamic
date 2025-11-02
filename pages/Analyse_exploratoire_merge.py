@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-from load_dataset import load_data, merge_dataset, save_merge
+from tools_for_dataset import load_data, merge_dataset, save_merge
 
 st.set_page_config(
     page_title='Analyse exploratoire du jeu de données merge'

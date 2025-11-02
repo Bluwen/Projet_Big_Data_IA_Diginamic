@@ -3,7 +3,7 @@ import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from load_dataset import load_data
+from tools_for_dataset import load_data
 
 st.set_page_config(
     page_title='Analyse exploratoire du jeu de données contracts'
