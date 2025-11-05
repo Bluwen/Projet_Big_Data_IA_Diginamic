@@ -11,13 +11,14 @@ from sklearn import (
     metrics,
     tree
 )
+from PIL import Image
 
 
 from tools_for_dataset import load_data, merge_dataset, save_merge, flagnan
 from scripts.First_model import firstmodelvisualisation, firstmodelparametres
 from scripts.Amelioration_model import ameliorationmodelparametres, ameliorationmodelvisualisation
 from scripts.Meilleure_model_actuel import meilleuremodelparametres, meilleuremodelvisualisation
-from scripts.Amelioration_model_plus_contraint import meilleuremodelvisualisationTest,meilleuremodelvisualisationTest1
+#from scripts.Amelioration_model_plus_contraint import meilleuremodelvisualisationTest,meilleuremodelvisualisationTest1
 
 st.set_page_config(
     page_title='Arbre de classification'
@@ -70,7 +71,6 @@ with tabs_preparation_donnes:
     st.write("3. Les colonnes sont séparées selon leurs catégories : numériques ou catégorielles")
 
     num_cols = [col for col in df_total_nan.columns if df_total_nan[col].dtype !="object"and col != "Churn"]
-    # cat_cols = [col for col in df_total_nan.columns if col not in num_cols and col != "customerID" and col != "Churn"]
     cat_cols = [col for col in df_total_nan.columns if col not in num_cols and col != "Churn"]
 
 
@@ -155,8 +155,9 @@ with tabs_modelisation:
 
     st.write("Pour 30,25 et 10")
     try:
-        path = "tree_30.png"
-        st.image(path)
+        path = "tree.png"
+        Image.open(path)
+        st.image("tree.png")
     except FileNotFoundError:
         fig = plt.figure(figsize=(50,40))
         tree.plot_tree(
@@ -169,59 +170,58 @@ with tabs_modelisation:
             fontsize=23
         )
 
-        plt.savefig("tree_30.png",bbox_inches="tight")
-        st.image("tree_30.png")
-    
+        plt.savefig("tree.png",bbox_inches="tight")
+        st.image("tree.png")
+
     # look at the feature importances
     try:
-        path = "features_arbres_33.csv"
+        path = "features_arbres.csv"
         dfFeatures = load_data(path)
     except FileNotFoundError:
         dfFeatures = pd.DataFrame({'Features':pipe[:-1].get_feature_names_out().tolist(),'Importances':pipe.steps[1][1].feature_importances_})
-        dfFeatures.to_csv("features_arbres_33.csv")
-
-    dfFeatures = pd.read_csv("features_arbres_33.csv")
+        dfFeatures.to_csv("features_arbres.csv")
 
     st.write(dfFeatures.sort_values(by='Importances',ascending=False).head(5))
 
 
-    pipe1 = pipeline.Pipeline([
-    ("preprocessor", preprocessor),
-    ('decision_tree', tree.DecisionTreeClassifier(max_depth = 33, max_features=25, max_leaf_nodes=10, class_weight="balanced"))
-    ])
+#    pipe1 = pipeline.Pipeline([
+#     ("preprocessor", preprocessor),
+#     ('decision_tree', tree.DecisionTreeClassifier(max_depth = 33, max_features=25, max_leaf_nodes=10, class_weight="balanced"))
+#     ])
 
-    pipe1.fit(X_train, y_train)
+#     pipe1.fit(X_train, y_train)
 
-    st.write("Pour 33,25 et 10")
-    try:
-        path = "tree_33.png"
-        st.image(path)
-    except FileNotFoundError:
-        fig = plt.figure(figsize=(50,40))
-        tree.plot_tree(
-            pipe1[-1],
-            #max_depth=3,
-            feature_names=pipe1[:-1].get_feature_names_out(),
-            filled=True,
-            rounded=True,
-            class_names=["No","Yes"],
-            fontsize=23
-        )
+#     st.write("Pour 33,25 et 10")
+#     try:
+#         path = "tree_33.png"
+#         Image.open(path)
+#         st.image("tree_33.png")
+#     except FileNotFoundError:
+#         fig = plt.figure(figsize=(50,40))
+#         tree.plot_tree(
+#             pipe1[-1],
+#             #max_depth=3,
+#             feature_names=pipe1[:-1].get_feature_names_out(),
+#             filled=True,
+#             rounded=True,
+#             class_names=["No","Yes"],
+#             fontsize=23
+#         )
 
-        plt.savefig("tree_33.png",bbox_inches="tight")
-        st.image("tree_33.png")
+#         plt.savefig("tree_33.png",bbox_inches="tight")
+#         st.image("tree_33.png")
 
-    # look at the feature importances
-    try:
-        path = "features_arbres_30.csv"
-        dfFeatures = load_data(path)
-    except FileNotFoundError:
-        dfFeatures = pd.DataFrame({'Features':pipe1[:-1].get_feature_names_out().tolist(),'Importances':pipe1.steps[1][1].feature_importances_})
-        dfFeatures.to_csv("features_arbres_30.csv")
+#     # look at the feature importances
+#     try:
+#         path = "features_arbres_30.csv"
+#         dfFeatures = load_data(path)
+#     except FileNotFoundError:
+#         dfFeatures = pd.DataFrame({'Features':pipe1[:-1].get_feature_names_out().tolist(),'Importances':pipe1.steps[1][1].feature_importances_})
+#         dfFeatures.to_csv("features_arbres_30.csv")
 
-    st.write(dfFeatures.sort_values(by='Importances',ascending=False).head(5))
+#     st.write(dfFeatures.sort_values(by='Importances',ascending=False).head(5))
+ ### 
 
-
-with tabs_4:
-    meilleuremodelvisualisationTest(X_train, y_train,X_test,y_test, num_cols, cat_cols)
-    meilleuremodelvisualisationTest1(X_train, y_train,X_test,y_test, num_cols, cat_cols)
+#with tabs_4:
+#    meilleuremodelvisualisationTest(X_train, y_train,X_test,y_test, num_cols, cat_cols)
+#    meilleuremodelvisualisationTest1(X_train, y_train,X_test,y_test, num_cols, cat_cols)
