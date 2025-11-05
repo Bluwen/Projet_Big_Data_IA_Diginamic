@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tools_for_dataset import load_data, merge_dataset, save_merge
+from tools_for_dataset import load_data, merge_dataset, save_merge, flagnan
 
 st.set_page_config(
     page_title='Analyse exploratoire du jeu de données merge'
@@ -25,6 +25,11 @@ except NameError:
 
     df_usage = ('data/usage.csv')
     df_usage = load_data(df_usage)
+
+    df_contracts = flagnan(df_contracts)
+    df_interactions = flagnan(df_interactions)
+    df_usage = flagnan(df_usage)
+    df_clients = flagnan(df_clients)
 
     df_merge = merge_dataset(df_clients, df_contracts, df_interactions, df_usage)
     save_merge(df_merge)

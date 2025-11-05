@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tools_for_dataset import load_data, merge_dataset, save_merge
+from tools_for_dataset import load_data, merge_dataset, save_merge, flagnan
 
 st.set_page_config(
     page_title='Focus NaN'
@@ -13,7 +13,7 @@ st.set_page_config(
 try:
     path = "data/merge.csv"
     df_merge = load_data(path)
-except NameError:
+except FileNotFoundError:
     df_clients = ('data/clients.csv')
     df_clients = load_data(df_clients)
 
@@ -26,9 +26,40 @@ except NameError:
     df_usage = ('data/usage.csv')
     df_usage = load_data(df_usage)
 
+    df_contracts = flagnan(df_contracts)
+    df_interactions = flagnan(df_interactions)
+    df_usage = flagnan(df_usage)
+    df_clients = flagnan(df_clients)
+
     df_merge = merge_dataset(df_clients, df_contracts, df_interactions, df_usage)
     save_merge(df_merge)
 
+
+st.subheader("Les NaN de la colonne TotalCharges désignent-ils seulement les clients qui débutent ? Est-ce qu'il faut exclure les clients qui ont moins d'un mois d'ancienneté ?")
+
+fig = plt.figure(figsize=(10, 4))
+sns.histplot(data=df_merge, x="tenure", hue = "TotalCharges_NaN")
+st.pyplot(fig)
+
+st.write("Conclusion : les NaN de la colonne TotalCharges ne désigne pas que les clients qui débutent.")
+
+
+
+st.subheader("Les NaN de la colonne InternetService désignent-ils seulement les clients qui n'ont pas de contrat de service internet ? (Vérifier qu'il n'y a pas de NaN pour des contrats internet)")
+
+fig = plt.figure(figsize=(10, 4))
+sns.histplot(data=df_merge, x="TVPackage", hue = "InternetService_NaN")
+st.pyplot(fig)
+
+st.write("Conclusion : les NaN de la colonne InternetService ne désigne pas que les clients qui n'ont pas de contrats internet.")
+
+
+st.subheader("Les NaN de la colonne TechSupport désignent-ils seulement les clients  qui n'ont pas de contrats de  services internet ?")
+fig = plt.figure(figsize=(10, 4))
+sns.histplot(data=df_merge, x="InternetService_NaN", hue = "TechSupport_NaN")
+st.pyplot(fig)
+
+st.write("Les NaN de la colonne TechSupport ne désignent pas seulement les clients qui n'ont pas de contrats de services internet.")
 
 # Focus valeurs NaN d'une colonne par une autre colonne
 list_columns = [col for col in df_merge.columns if col !="customerID" and col != "FeedbackText"]

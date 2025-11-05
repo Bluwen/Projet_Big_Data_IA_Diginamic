@@ -28,3 +28,8 @@ def merge_dataset(df_client, df_contacts, df_interactions, df_usage):
 
 def save_merge(df_total, path = "data/merge.csv"):
     df_total.to_csv(path, index = False)
+
+def flagnan(df):
+    for col in df.columns[df.isnull().any()]:
+        df[col +"_NaN"]=[0 if str(value) != "nan" else 1 for value in df[col]]
+    return df
