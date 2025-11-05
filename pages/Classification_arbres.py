@@ -17,6 +17,7 @@ from tools_for_dataset import load_data, merge_dataset, save_merge, flagnan
 from scripts.First_model import firstmodelvisualisation, firstmodelparametres
 from scripts.Amelioration_model import ameliorationmodelparametres, ameliorationmodelvisualisation
 from scripts.Meilleure_model_actuel import meilleuremodelparametres, meilleuremodelvisualisation
+from scripts.Amelioration_model_plus_contraint import meilleuremodelvisualisationTest,meilleuremodelvisualisationTest1
 
 st.set_page_config(
     page_title='Arbre de classification'
@@ -151,17 +152,76 @@ with tabs_modelisation:
 
     pipe.fit(X_train, y_train)
 
-    st.write(len(X_train.columns))
-    st.write(len(pipe[:-1].get_feature_names_out()))
 
-    fig = plt.figure(figsize=(40,30))
-    tree.plot_tree(
-        pipe[-1],
-        max_depth=30,
-        feature_names=pipe[:-1].get_feature_names_out(),
-        filled=True,
-        rounded=True,
-        class_names=["No","Yes"],
-        fontsize=9
-    )
-    st.pyplot(fig)
+    st.write("Pour 30,25 et 10")
+    try:
+        path = "tree_30.png"
+        st.image(path)
+    except FileNotFoundError:
+        fig = plt.figure(figsize=(50,40))
+        tree.plot_tree(
+            pipe[-1],
+            #max_depth=3,
+            feature_names=pipe[:-1].get_feature_names_out(),
+            filled=True,
+            rounded=True,
+            class_names=["No","Yes"],
+            fontsize=23
+        )
+
+        plt.savefig("tree_30.png",bbox_inches="tight")
+        st.image("tree_30.png")
+    
+    # look at the feature importances
+    try:
+        path = "features_arbres_33.csv"
+        dfFeatures = load_data(path)
+    except FileNotFoundError:
+        dfFeatures = pd.DataFrame({'Features':pipe[:-1].get_feature_names_out().tolist(),'Importances':pipe.steps[1][1].feature_importances_})
+        dfFeatures.to_csv("features_arbres_33.csv")
+
+    dfFeatures = pd.read_csv("features_arbres_33.csv")
+
+    st.write(dfFeatures.sort_values(by='Importances',ascending=False).head(5))
+
+
+    pipe1 = pipeline.Pipeline([
+    ("preprocessor", preprocessor),
+    ('decision_tree', tree.DecisionTreeClassifier(max_depth = 33, max_features=25, max_leaf_nodes=10, class_weight="balanced"))
+    ])
+
+    pipe1.fit(X_train, y_train)
+
+    st.write("Pour 33,25 et 10")
+    try:
+        path = "tree_33.png"
+        st.image(path)
+    except FileNotFoundError:
+        fig = plt.figure(figsize=(50,40))
+        tree.plot_tree(
+            pipe1[-1],
+            #max_depth=3,
+            feature_names=pipe1[:-1].get_feature_names_out(),
+            filled=True,
+            rounded=True,
+            class_names=["No","Yes"],
+            fontsize=23
+        )
+
+        plt.savefig("tree_33.png",bbox_inches="tight")
+        st.image("tree_33.png")
+
+    # look at the feature importances
+    try:
+        path = "features_arbres_30.csv"
+        dfFeatures = load_data(path)
+    except FileNotFoundError:
+        dfFeatures = pd.DataFrame({'Features':pipe1[:-1].get_feature_names_out().tolist(),'Importances':pipe1.steps[1][1].feature_importances_})
+        dfFeatures.to_csv("features_arbres_30.csv")
+
+    st.write(dfFeatures.sort_values(by='Importances',ascending=False).head(5))
+
+
+with tabs_4:
+    meilleuremodelvisualisationTest(X_train, y_train,X_test,y_test, num_cols, cat_cols)
+    meilleuremodelvisualisationTest1(X_train, y_train,X_test,y_test, num_cols, cat_cols)
