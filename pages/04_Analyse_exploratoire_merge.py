@@ -37,7 +37,7 @@ except NameError:
 # ----- 
 
 #afficher les données
-st.title('Visualisation et exploration ddu jeu de données interactions')
+st.title('Visualisation et exploration du jeu de données interactions')
 st.header('Visualisation des données brutes')
 st.write(df_merge)
 
