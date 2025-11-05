@@ -47,7 +47,7 @@ except FileNotFoundError:
     save_merge(df_merge)
 
 
-tabs_preparation_donnes,tabs_model,tabs_visualisation, tabs_3, tabs_4 = st.tabs(["Preparation des donnees","Preprocessing et Modèle","Visualisations", "Modelisation", "Evaluation"])
+tabs_preparation_donnes,tabs_model,tabs_visualisation, tabs_modelisation, tabs_4 = st.tabs(["Preparation des donnees","Preprocessing et Modèle","Visualisations", "Modelisation de l'arbre de classification", "Evaluation"])
 
 with tabs_preparation_donnes:
 
@@ -137,6 +137,31 @@ with tabs_visualisation:
         ameliorationmodelvisualisation(X_train, y_train,num_cols, cat_cols)
     if selection == "Meilleur modèle actuel":
         meilleuremodelvisualisation(X_train, y_train,X_test,y_test, num_cols, cat_cols)
-        
-with tabs_4:
-    pass
+
+with tabs_modelisation:
+    preprocessor = compose.ColumnTransformer(
+        [("encoder", preprocessing.OneHotEncoder(), cat_cols),
+        ("std_scaler", preprocessing.StandardScaler(), num_cols)], remainder="passthrough"
+    )
+
+    pipe = pipeline.Pipeline([
+    ("preprocessor", preprocessor),
+    ('decision_tree', tree.DecisionTreeClassifier(max_depth = 30, max_features=40, max_leaf_nodes=10, class_weight="balanced"))
+    ])
+
+    pipe.fit(X_train, y_train)
+
+    st.write(len(X_train.columns))
+    st.write(len(pipe[:-1].get_feature_names_out()))
+
+    fig = plt.figure(figsize=(40,30))
+    tree.plot_tree(
+        pipe[-1],
+        max_depth=30,
+        feature_names=pipe[:-1].get_feature_names_out(),
+        filled=True,
+        rounded=True,
+        class_names=["No","Yes"],
+        fontsize=9
+    )
+    st.pyplot(fig)
