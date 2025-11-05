@@ -118,8 +118,8 @@ with tabs_1:
     st.write("Remarque : dans les deux jeux de données, la target est déséquilibrée ce qui peut rendre difficile l'apprentissage de certains models")
 
 with tabs_model:
-    selection = st.segmented_control("Choose a model", ["1er model", "Recherche des meilleurs hyperparamètres", "Meilleur model actuel"], selection_mode= "single", key = "preprossing")
-    if selection == "1er model":
+    selection = st.segmented_control("Choisissez un model", ["Premier model", "Recherche des meilleurs hyperparamètres", "Meilleur model actuel"], selection_mode= "single", key = "preprossing")
+    if selection == "Premier model":
         firstModelParametres()
     if selection == "Recherche des meilleurs hyperparamètres":
         AmeliorationModelParametres()
@@ -127,8 +127,8 @@ with tabs_model:
         MeilleureModelParametres()
 
 with tabs_2:
-    selection = st.segmented_control("Choose a model", ["1er model", "Recherche des meilleurs hyperparamètres", "Meilleur model actuel"], selection_mode= "single", key = "visualisation")
-    if selection == "1er model":
+    selection = st.segmented_control("Choisissez un model", ["Premier model", "Recherche des meilleurs hyperparamètres", "Meilleur model actuel"], selection_mode= "single", key = "visualisation")
+    if selection == "Premier model":
         firstModelVisualisation(X_train, y_train,X_test,y_test, cat_cols)
         st.subheader("Conclusion")
         st.write("Il y a un sur apprentissage des données d'entrainement et le model prédit mal sur le jeu de données de test.")
