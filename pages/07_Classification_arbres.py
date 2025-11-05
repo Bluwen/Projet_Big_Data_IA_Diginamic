@@ -18,6 +18,7 @@ from tools_for_dataset import load_data, merge_dataset, save_merge, flagnan
 from scripts.First_model import firstmodelvisualisation, firstmodelparametres
 from scripts.Amelioration_model import ameliorationmodelparametres, ameliorationmodelvisualisation
 from scripts.Meilleure_model_actuel import meilleuremodelparametres, meilleuremodelvisualisation
+from scripts.Hypothses_arbre import hypoarbre
 #from scripts.Amelioration_model_plus_contraint import meilleuremodelvisualisationTest,meilleuremodelvisualisationTest1
 
 st.set_page_config(
@@ -49,7 +50,7 @@ except FileNotFoundError:
     save_merge(df_merge)
 
 
-tabs_preparation_donnes,tabs_model,tabs_visualisation, tabs_modelisation, tabs_4 = st.tabs(["Preparation des donnees","Preprocessing et Modèle","Visualisations", "Modelisation de l'arbre de classification", "Evaluation"])
+tabs_preparation_donnes,tabs_model,tabs_visualisation, tabs_modelisation, tabs_hypotheses = st.tabs(["Preparation des donnees","Preprocessing et Modèle","Visualisations", "Modelisation de l'arbre de classification", "Vérifications des hypothèses"])
 
 with tabs_preparation_donnes:
 
@@ -153,7 +154,7 @@ with tabs_modelisation:
     pipe.fit(X_train, y_train)
 
 
-    st.write("Pour 30,25 et 10")
+    st.header("Visualisation et explicabilité du modèle")
     try:
         path = "tree.png"
         Image.open(path)
@@ -183,6 +184,21 @@ with tabs_modelisation:
 
     st.write(dfFeatures.sort_values(by='Importances',ascending=False).head(5))
 
+    st.subheader("Observations :")
+    st.write("La visualisation de l’arbre et des features les plus importantes de cet arbre permet d’observer plusieurs choses :")
+    st.markdown("-	Le temps passer dans la compagnie influence les clients à partir ou non.")
+    st.markdown("-	Le statu de Senior Citizen influence positivement les clients qui le possède à rester :")
+    st.markdown("=>Cela est sûrement dû aux avantages de contrat que permet d’avoir le statu")
+    st.markdown("-	Le coût par mois et total quant eux semblent influencer les clients à partir. ")
+    st.markdown("=>	L’hypothèse suivante peut être poser : est-ce que le coût des charges par mois est élevé plus il y a de chances que les clients partent ?")
+    st.markdown("-	Le nombre d’appel téléphonique passer par mois semblent influencer les clients à partir.")
+    st.markdown("=>	Peut-être que le prix d’un appel téléphonique n’est pas intéressant ?")
+    st.markdown("-	Le type de contrat sur deux ans semble également pousser les clients à partir :")
+    st.markdown("=>	Cela peut être dû à l’évolution des prix du marché qui rendre les prix d’un contrat sur deux ans beaucoup moins attractifs ?")
+
+
+with tabs_hypotheses:
+    hypoarbre()
 
 #    pipe1 = pipeline.Pipeline([
 #     ("preprocessor", preprocessor),
