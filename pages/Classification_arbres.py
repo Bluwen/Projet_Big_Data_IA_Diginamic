@@ -14,7 +14,6 @@ from sklearn import (
 
 
 from tools_for_dataset import load_data, merge_dataset, save_merge, flagnan
-from test_hello import hellosbsb
 from scripts.First_model import firstModelVisualisation, firstModelParametres
 from scripts.Amelioration_model import AmeliorationModelParametres, AmeliorationModelVisualisation
 from scripts.Meilleure_model_actuel import MeilleureModelParametres, MeilleureModelVisualisation
