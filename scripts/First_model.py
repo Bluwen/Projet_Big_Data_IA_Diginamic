@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import (
     preprocessing,
-    model_selection,
     pipeline,
     compose,
     metrics,
@@ -13,16 +12,29 @@ from sklearn import (
 )
 
 
-def firstModelParametres():
-    st.header("Information sur le premier model")
-    st.write("Pour un premier essais sur un arbre de classification, il a été choisi de ne pas normaliser les données numérique et d'encoder par la méthode OneHotEncoder (rajoute des colonnes contenant des 1 ou 0)")
-    st.write("Seule l'hyperparmètres : class_weight a été modifié pour permettre un equilibrage pour la classification de la target")
+def firstmodelparametres():
+    """
+    Une fonction permettant d'afficher les informations concernant le processing pour un premier model naif d'arbre de classification.
+    """
+    st.header("Information sur un premier model naif d'arbre de classification")
+    st.write("Pour un premier essai sur un arbre de classification, il a été choisi de ne pas normaliser les données numériques et d'encoder par la méthode OneHotEncoder (rajoute des colonnes contenant des 1 ou 0)")
+    st.write("Seule l'hyperparamètres : class_weight a été modifié pour permettre un équilibrage pour la classification de la cible")
 
 
-def firstModelVisualisation(X_train, y_train,X_test,y_test, cat_cols):
+def firstmodelvisualisation(X_train, y_train,X_test,y_test, cat_cols):
+    """
+    Elle permet d'entrainer et d'afficher les résultats d'un arbre de classification
 
-    st.header("Visualisation des resultats du 1er model")
+    Args:
+        X_train (DataFrame): tableau contenant les données d'entrainements
+        y_train (_DataFrame): tableau contenant les targets des données d'entrainements
+        X_test (DataFrame): tableau contenant les données de test
+        y_test (DataFrame): tableau contenant les targets des données de test
+        cat_cols (list): liste contenant les noms des colonnes catégorielles.
+    """
+
     
+    # Parti permetant de déclarer et d'entrainer le model
     preprocessor = compose.ColumnTransformer(
         [("encoder", preprocessing.OneHotEncoder(), cat_cols)], remainder="passthrough"
     )
@@ -31,6 +43,9 @@ def firstModelVisualisation(X_train, y_train,X_test,y_test, cat_cols):
         ('tree', tree.DecisionTreeClassifier(class_weight = "balanced"))
     ])
     pipe.fit(X_train, y_train)
+
+    # Parti permetant de visualiser les résultats de performance du model
+    st.header("Visualisation des resultats du premier model")
 
     st.subheader("Résultats sur le jeu d'entrainement")
 
@@ -47,6 +62,8 @@ def firstModelVisualisation(X_train, y_train,X_test,y_test, cat_cols):
     metrics.ConfusionMatrixDisplay.from_predictions(y_test, pipe.predict(X_test), cmap="Blues").figure_.savefig('confusion_matrix_test.png')
     st.image('confusion_matrix_test.png')
 
+
+    st.subheader("Courbe Precision Recall")
     fig = plt.figure(figsize=(10, 4))
     precision, recall, threshold = (
     metrics.precision_recall_curve(

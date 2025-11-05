@@ -14,9 +14,9 @@ from sklearn import (
 
 
 from tools_for_dataset import load_data, merge_dataset, save_merge, flagnan
-from scripts.First_model import firstModelVisualisation, firstModelParametres
-from scripts.Amelioration_model import AmeliorationModelParametres, AmeliorationModelVisualisation
-from scripts.Meilleure_model_actuel import MeilleureModelParametres, MeilleureModelVisualisation
+from scripts.First_model import firstmodelvisualisation, firstmodelparametres
+from scripts.Amelioration_model import ameliorationmodelparametres, ameliorationmodelvisualisation
+from scripts.Meilleure_model_actuel import meilleuremodelparametres, meilleuremodelvisualisation
 
 st.set_page_config(
     page_title='Arbre de classification'
@@ -47,9 +47,9 @@ except FileNotFoundError:
     save_merge(df_merge)
 
 
-tabs_1,tabs_model,tabs_2, tabs_3, tabs_4 = st.tabs(["Preparation des donnees","Preprocessing et Models","Visualisations", "Modelisation", "Evaluation"])
+tabs_preparation_donnes,tabs_model,tabs_visualisation, tabs_3, tabs_4 = st.tabs(["Preparation des donnees","Preprocessing et Modèle","Visualisations", "Modelisation", "Evaluation"])
 
-with tabs_1:
+with tabs_preparation_donnes:
 
     st.write("1. Dans un premier temps, les lignes contenant des NaN sont suprimées ainsi que les colonnes 'customerId' 'FeedbackText'. Cette dernière contenant seulement du texte n'est pas forcément pertinant pour un model de classification.")
     
@@ -118,24 +118,25 @@ with tabs_1:
     st.write("Remarque : dans les deux jeux de données, la target est déséquilibrée ce qui peut rendre difficile l'apprentissage de certains models")
 
 with tabs_model:
-    selection = st.segmented_control("Choisissez un model", ["Premier model", "Recherche des meilleurs hyperparamètres", "Meilleur model actuel"], selection_mode= "single", key = "preprossing")
-    if selection == "Premier model":
-        firstModelParametres()
+    selection = st.segmented_control("Choisissez un modèle", ["Premier modèle", "Recherche des meilleurs hyperparamètres", "Meilleur modèle actuel"], selection_mode= "single", key = "preprossing")
+    if selection == "Premier modèle":
+        firstmodelparametres()
     if selection == "Recherche des meilleurs hyperparamètres":
-        AmeliorationModelParametres()
-    if selection == "Meilleur model actuel":
-        MeilleureModelParametres()
+        ameliorationmodelparametres()
+    if selection == "Meilleur modèle actuel":
+        meilleuremodelparametres()
 
-with tabs_2:
-    selection = st.segmented_control("Choisissez un model", ["Premier model", "Recherche des meilleurs hyperparamètres", "Meilleur model actuel"], selection_mode= "single", key = "visualisation")
-    if selection == "Premier model":
-        firstModelVisualisation(X_train, y_train,X_test,y_test, cat_cols)
+with tabs_visualisation:
+    selection = st.segmented_control("Choisissez un modèle", ["Premier modèle", "Recherche des meilleurs hyperparamètres", "Meilleur modèle actuel"], selection_mode= "single", key = "visualisation")
+    if selection == "Premier modèle":
+        firstmodelvisualisation(X_train, y_train,X_test,y_test, cat_cols)
         st.subheader("Conclusion")
-        st.write("Il y a un sur apprentissage des données d'entrainement et le model prédit mal sur le jeu de données de test.")
-        st.write("L'objectif étant d'identifier les clients qui risques de parties ont souhaite diminuer le nombre de faux négatifs (ici des clients labelisé 0 alors qu'ils sont 1)")
+        st.write("Il y a un sur apprentissage des données d'entrainement et le modèle prédit mal sur le jeu de données de test.")
+        st.write("L'objectif étant d'identifier les clients qui risques de parties ont souhaité diminuer le nombre de faux négatifs (ici des clients labelisé 0 alors qu'ils sont 1)")
     if selection == "Recherche des meilleurs hyperparamètres":
-        AmeliorationModelVisualisation(X_train, y_train,X_test,y_test, num_cols, cat_cols)
-    if selection == "Meilleur model actuel":
-        MeilleureModelVisualisation(X_train, y_train,X_test,y_test, num_cols, cat_cols)
+        ameliorationmodelvisualisation(X_train, y_train,num_cols, cat_cols)
+    if selection == "Meilleur modèle actuel":
+        meilleuremodelvisualisation(X_train, y_train,X_test,y_test, num_cols, cat_cols)
+        
 with tabs_4:
     pass
